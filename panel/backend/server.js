@@ -15,7 +15,6 @@ app.use('/api/db', require('./routes/dbRoutes'));
 app.use('/api/files', require('./routes/fileManager'));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/system", require("./routes/system"));
-app.use("/api/files", require("./routes/files"));
 app.use("/api/service", require("./routes/service"));
 app.use('/api/pm2', require('./routes/pm2'));
 
