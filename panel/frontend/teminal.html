@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body style="background:black; color:lime; font-family:monospace">
+
+<h3>Terminal</h3>
+
+<pre id="term"></pre>
+<input id="input" autofocus style="width:100%">
+
+<script>
+const ws = new WebSocket("ws://localhost:3000");
+
+ws.onmessage = (e) => {
+    term.innerText += e.data;
+    window.scrollTo(0, document.body.scrollHeight);
+};
+
+input.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter"){
+        ws.send(input.value + "\n");
+        input.value = "";
+    }
+});
+</script>
+
+</body>
+</html>

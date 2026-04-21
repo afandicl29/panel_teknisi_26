@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel Dashboard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+        }
+        .box {
+            background: #1e293b;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+        }
+        button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🚀 Panel Server</h1>
+
+<div class="box">
+    <h3>📊 Monitoring</h3>
+    CPU: <span id="cpu">-</span>% <br>
+    RAM: <span id="ram">-</span>% 
+</div>
+
+<div class="box">
+    <h3>⚙️ Service Manager</h3>
+
+    <input id="name" placeholder="nama service"><br><br>
+    <input id="cmd" placeholder="command (contoh: node bot.js)" size="40"><br><br>
+
+    <button onclick="start()">Start</button>
+    <button onclick="stop()">Stop</button>
+
+    <h4>Service aktif:</h4>
+    <ul id="list"></ul>
+</div>
+
+<div class="box">
+    <h3>🖥️ Terminal</h3>
+    <button onclick="openTerminal()">Buka Terminal</button>
+</div>
+
+<h2>File Manager</h2>
+
+<div style="display:flex; gap:20px;">
+    <div style="width:30%; border:1px solid #ccc; padding:10px;">
+        <h4>Files</h4>
+        <div id="fileList"></div>
+    </div>
+
+    <div style="width:70%;">
+        <h4>Editor</h4>
+        <textarea id="editor" style="width:100%; height:300px;"></textarea>
+        <br>
+        <button onclick="saveFile()">Save</button>
+        <button onclick="deleteFile()">Delete</button>
+    </div>
+</div>
+
+<script src="js/fileManager.js"></script>
+
+<script>
+async function loadStats(){
+    const res = await fetch("http://localhost:3000/api/system/stats");
+    const data = await res.json();
+
+    cpu.innerText = data.cpu.toFixed(1);
+    ram.innerText = data.ram.toFixed(1);
+}
+
+setInterval(loadStats, 2000);
+loadStats();
+
+// START SERVICE
+async function start(){
+    await fetch("http://localhost:3000/api/service/start",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            name: name.value,
+            command: cmd.value
+        })
+    });
+
+    loadServices();
+}
+
+// STOP SERVICE
+async function stop(){
+    await fetch("http://localhost:3000/api/service/stop",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            name: name.value
+        })
+    });
+
+    loadServices();
+}
+
+// LIST SERVICE
+async function loadServices(){
+    const res = await fetch("http://localhost:3000/api/service/list");
+    const data = await res.json();
+
+    list.innerHTML = "";
+    data.forEach(s => {
+        list.innerHTML += "<li>"+s+"</li>";
+    });
+}
+
+setInterval(loadServices, 2000);
+loadServices();
+
+// TERMINAL
+function openTerminal(){
+    window.open("terminal.html");
+}
+</script>
+
+</body>
+</html>
