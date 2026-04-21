@@ -11,6 +11,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 
 // routes
+app.use('/api/db', require('./routes/dbRoutes'));
 app.use('/api/files', require('./routes/fileManager'));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/system", require("./routes/system"));
